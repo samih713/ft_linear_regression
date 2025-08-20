@@ -1,7 +1,11 @@
 #ifndef FT_LINEAR_REGRESSION
 #define FT_LINEAR_REGRESSION
 
+#include <stdlib.h>
+#include <stddef.h>
+#include <stdio.h>  // -- remove
 #include "raylib.h"
+#include "tinyfiledialogs.h"
 
 /* -------------------------------------------------------------------------- */
 /*                                  CONSTANTS                                 */
