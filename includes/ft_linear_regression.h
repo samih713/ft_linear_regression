@@ -4,8 +4,11 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <stdio.h>  // -- remove
+#include <assert.h>
 #include "raylib.h"
 #include "tinyfiledialogs.h"
+
+#define TODO(thing) (assert(false && (thing)))
 
 /* -------------------------------------------------------------------------- */
 /*                                  CONSTANTS                                 */
