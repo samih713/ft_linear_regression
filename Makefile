@@ -1,7 +1,11 @@
 NAME:= ft_linear_regression
 
 LIBS_DIR:= libs
-LIBS:= -lraylib -lm
+ifeq ($(shell uname), Linux)
+	LIBS:= -lraylib -lm
+else ifeq ($(shell uname), Darwin)
+	LIBS:= -lraylib_mac -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL -lm
+endif
 INCLUDES:= includes
 
 SRCS:= main.c $(wildcard srcs/*/*.c)
