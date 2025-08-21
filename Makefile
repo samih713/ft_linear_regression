@@ -1,19 +1,23 @@
 NAME:= ft_linear_regression
 
-LIBS_DIR:= libs
+CC:= cc
+INCLUDES:= includes
+CFLAGS:= -Wall -Werror -Wextra -I$(INCLUDES)
+
 ifeq ($(shell uname), Linux)
 	LIBS:= -lraylib -lm
 else ifeq ($(shell uname), Darwin)
+	CFLAGS += -D__MAC__
 	LIBS:= -lraylib_mac -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL -lm
 endif
-INCLUDES:= includes
+
+LIBS_DIR:= libs
+LDFLAGS:= -L$(LIBS_DIR) $(LIBS)
 
 SRCS:= main.c $(wildcard srcs/*/*.c)
 OBJS:= $(SRCS:.c=.o)
 
-CC:= cc
-CFLAGS:= -Wall -Werror -Wextra -I$(INCLUDES)
-LDFLAGS:= -L$(LIBS_DIR) $(LIBS)
+
 
 # ---------------- Colors & Styling ----------------
 # Allow disabling color by invoking: make NO_COLOR=1
