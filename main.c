@@ -3,7 +3,7 @@
 #include "ft_linear_regression.h"
 #include <dlfcn.h>
 
-typedef int (*f_ptr)(int, int);
+typedef void (*f_ptr)();
 
 void run_lr(point_t *points)
 {
@@ -19,7 +19,7 @@ void run_lr(point_t *points)
 
 void recompile()
 {
-    static const char *compile = "cc -c -fPIC add.c && cc -shared add.o -o libdyn.so";
+    static const char *compile = "make liblr.so && mv ./libs/liblr.so .";
     system(compile);
 }
 
@@ -54,15 +54,21 @@ int main()
     camera.target = (Vector2){0,0};
     camera.zoom = 1;
 
+    f_ptr dw = get_symbol("liblr.so", "DrawMenu");
     point_t *points;
     while (!WindowShouldClose())
     {
+        if (IsKeyDown(KEY_R)) {
+            dw = get_symbol("liblr.so", "DrawMenu");
+            printf("Reloaded\n");
+        }
+
         BeginDrawing();
         BeginMode2D(camera);
 
         ClearBackground(DARKGRAY);
         DrawPlotArea();
-        DrawMenu(&action);
+        dw();
         switch (action)
         {
         case MENU_LOAD_CSV:

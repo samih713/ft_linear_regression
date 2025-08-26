@@ -3,6 +3,7 @@ NAME:= ft_linear_regression
 CC:= cc
 INCLUDES:= includes
 CFLAGS:= -Wall -Werror -Wextra -I$(INCLUDES)
+LIB_LR:= liblr.so
 
 ifeq ($(shell uname), Linux)
 	LIBS:= -lraylib -lm
@@ -14,7 +15,7 @@ endif
 LIBS_DIR:= libs
 LDFLAGS:= -L$(LIBS_DIR) $(LIBS)
 
-SRCS:= main.c $(wildcard srcs/*/*.c)
+SRCS:= $(wildcard srcs/*/*.c)
 OBJS:= $(SRCS:.c=.o)
 
 
@@ -56,15 +57,21 @@ endif
 
 all: $(NAME)
 
-$(NAME): $(OBJS)
+$(LIB_LR): $(OBJS)
+	$(Q)printf "$(BOLD)Building $(LIB_LR)...$(RESET)\n"
+	$(Q)$(CC) $(LDFLAGS) $^ -shared -o $@
+	mv $@ ./libs/
+
+
+$(NAME): $(LIB_LR)
 	$(Q)printf "$(BOLD)Building $(NAME)...$(RESET)\n"
 	$(Q)printf "$(BOLD)$(GREEN)[LD]$(RESET) Linking $@\n"
-	$(Q)$(CC) $(CFLAGS) $(OBJS) $(LDFLAGS) -o $@
+	$(Q)$(CC) $(CFLAGS) -L./libs -llr main.c -o $@
 	$(Q)printf "$(BOLD)$(GREEN)✔ Built $@$(RESET)\n"
 
 %.o: %.c
 	$(Q)printf "$(BOLD)$(CYAN)[CC]$(RESET) %s -> %s\n" "$(notdir $<)" "$(notdir $@)"
-	$(Q)$(CC) $(CFLAGS) -c $< -o $@
+	$(Q)$(CC) $(CFLAGS) -c -fPIC $< -o $@
 
 run: all
 	$(Q)printf "$(BOLD)$(BLUE)[RUN]$(RESET) ./$(NAME)\n"
@@ -77,6 +84,8 @@ clean:
 fclean: clean
 	$(Q)printf "$(BOLD)$(YELLOW)[CLEAN]$(RESET) binary $(NAME)\n"
 	$(Q)rm -f $(NAME)
+	$(Q)rm -f ./libs/liblr.so
+
 
 re:
 	$(Q)$(MAKE) -s fclean
