@@ -4,7 +4,6 @@ MENU_ACTION action = MENU_NONE;
 
 void DrawMenu()
 {
-    // printf("hellow \n");
     // load csv button
     Rectangle LoadCSV = {
         .x = BUTTON_X,

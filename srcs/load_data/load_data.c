@@ -1,5 +1,3 @@
-#define LOAD_CSV_H_IMPLEMENTATION
-
 #include "ft_linear_regression.h"
 
 size_t n_points = MAX_POINTS;
