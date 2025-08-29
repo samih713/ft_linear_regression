@@ -37,7 +37,7 @@ extern size_t n_points;
 #define WINDOW_W 800
 #define WINDOW_H 600
 /* --------------------------------- BUTTON --------------------------------- */
-#define BUTTON_COLOR (Fade(BLACK, 0.55))
+#define BUTTON_COLOR (Fade(WHITE, 0.5))
 #define BUTTON_X (WINDOW_W * 0.75)
 #define BUTTON_SIZE ((Vector2){.x = WINDOW_W * .23, .y = WINDOW_H * .08})
 #define BUTTON_H_GAP (WINDOW_H * 0.03)
@@ -52,7 +52,9 @@ void DrawButton(const char *tex, Rectangle button);
 /* -------------------------------------------------------------------------- */
 /*                                    PLOT                                    */
 /* -------------------------------------------------------------------------- */
-void DrawPlotArea();
+void DrawAxis();
+void DrawPoints(point_t *points);
+void standardize_points(point_t *points);
 /* -------------------------------------------------------------------------- */
 /*                                  LOAD DATA                                 */
 /* -------------------------------------------------------------------------- */

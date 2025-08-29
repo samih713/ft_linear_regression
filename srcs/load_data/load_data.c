@@ -20,7 +20,8 @@ point_t *load_data()
         NULL,
         NULL,
         0);
-
+    if (!CSVPath)
+        return NULL;
     FILE *f = load_csv(CSVPath);
     n_points = read_csv(f, c, points, MAX_POINTS, load_points);
     return (points);
