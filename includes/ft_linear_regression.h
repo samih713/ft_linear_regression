@@ -53,12 +53,12 @@ void DrawButton(const char *tex, Rectangle button);
 /*                                    PLOT                                    */
 /* -------------------------------------------------------------------------- */
 void DrawAxis();
-void DrawPoints(point_t *points);
-void standardize_points(point_t *points);
+void DrawPoints(point_t *points, size_t n_points);
+void standardize_points(point_t *points, size_t n_points);
 /* -------------------------------------------------------------------------- */
 /*                                  LOAD DATA                                 */
 /* -------------------------------------------------------------------------- */
-point_t *load_data();
+bool load_data(RenderTexture2D *canvas);
 void load_points(char **values, void *points);
 
 #endif // FT_LINEAR_REGRESSION
