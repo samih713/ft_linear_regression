@@ -2,19 +2,19 @@ NAME:= ft_linear_regression
 
 CC:= cc
 INCLUDES:= includes
-CFLAGS:= -Wall -Werror -Wextra -I$(INCLUDES) -ggdb3
+CFLAGS:= -Wall -Werror -Wextra -I$(INCLUDES) -ggdb3 -fsanitize=address
 
 ifeq ($(shell uname), Linux)
-	LIBS:= -lraylib -lm
+	LIBS:= -lraylib -lmatrix -lm 
 else ifeq ($(shell uname), Darwin)
 	CFLAGS += -D__MAC__
-	LIBS:= -lraylib_mac -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL -lm
+	LIBS:= -lraylib_mac -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL -lmatrix -lm 
 endif
 
 LIBS_DIR:= libs
 LDFLAGS:= -L$(LIBS_DIR) $(LIBS)
 
-SRCS:= main.c $(wildcard srcs/*/*.c) 
+SRCS:= $(wildcard srcs/*/*.c) 
 OBJS:= $(SRCS:.c=.o)
 
 
@@ -51,23 +51,28 @@ else
 Q:=@
 endif
 
-.PHONY: all run clean fclean re
+.PHONY: all run clean fclean re matrix
 
-all: $(NAME)
+all: matrix $(NAME)
 
-$(NAME): $(OBJS)
+run: all
+	$(Q)printf "$(BOLD)$(BLUE)[RUN]$(RESET) ./$(NAME)\n"
+	$(Q)./$(NAME)
+
+matrix:
+	$(MAKE) -C $@
+	mv matrix/libmatrix.a $(LIBS_DIR)
+
+$(NAME): main.c $(OBJS)
 	$(Q)printf "$(BOLD)Building $(NAME)...$(RESET)\n"
 	$(Q)printf "$(BOLD)$(GREEN)[LD]$(RESET) Linking $@\n"
-	$(Q)$(CC) $(CFLAGS) $(OBJS) $(LDFLAGS) -o $@
+	$(Q)$(CC) $(CFLAGS) main.c $(OBJS) $(LDFLAGS) -o $@
 	$(Q)printf "$(BOLD)$(GREEN)✔ Built $@$(RESET)\n"
 
 %.o: %.c
 	$(Q)printf "$(BOLD)$(CYAN)[CC]$(RESET) %s -> %s\n" "$(notdir $<)" "$(notdir $@)"
 	$(Q)$(CC) $(CFLAGS) -c $< -o $@
 
-run: all
-	$(Q)printf "$(BOLD)$(BLUE)[RUN]$(RESET) ./$(NAME)\n"
-	$(Q)./$(NAME)
 
 clean:
 	$(Q)printf "$(BOLD)$(YELLOW)[CLEAN]$(RESET) object files\n"
@@ -75,6 +80,7 @@ clean:
 
 fclean: clean
 	$(Q)printf "$(BOLD)$(YELLOW)[CLEAN]$(RESET) binary $(NAME)\n"
+	$(Q)$(MAKE) fclean -C matrix
 	$(Q)rm -f $(NAME)
 
 

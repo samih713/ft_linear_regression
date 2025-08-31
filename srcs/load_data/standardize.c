@@ -2,14 +2,20 @@
 #include <float.h>
 #include <math.h>
 
-void standardize_points(point_t *points, size_t n_points)
+void standardize_points(data_t *data)
 {
+    static point_t std_points[MAX_POINTS];
+    data->std_points = std_points;
+
+    size_t n_points = data->n_points;
+    point_t *points = data->points;
+
     // Compute mean
     float mean_x = 0.f, mean_y = 0.f;
     for (size_t i = 0; i < n_points; ++i)
     {
-        mean_x += points[i].milage;
-        mean_y += points[i].price;
+        mean_x += points[i].x;
+        mean_y += points[i].y;
     }
     mean_x /= (float)n_points;
     mean_y /= (float)n_points;
@@ -18,8 +24,8 @@ void standardize_points(point_t *points, size_t n_points)
     float var_x = 0.f, var_y = 0.f;
     for (size_t i = 0; i < n_points; ++i)
     {
-        float dx = points[i].milage - mean_x;
-        float dy = points[i].price - mean_y;
+        float dx = points[i].x - mean_x;
+        float dy = points[i].y - mean_y;
         var_x += dx * dx;
         var_y += dy * dy;
     }
@@ -31,48 +37,21 @@ void standardize_points(point_t *points, size_t n_points)
         stdev_y = 1.f;
 
     // Standardize and find min / max
-    float min_x = FLT_MAX, min_y = FLT_MAX;
-    float max_x = -FLT_MAX, max_y = -FLT_MAX;
+    data->min_x = FLT_MAX, data->min_y = FLT_MAX;
+    data->max_x = -FLT_MAX, data->max_y = -FLT_MAX;
     for (size_t i = 0; i < n_points; ++i)
     {
-        float z_x = (points[i].milage - mean_x) / stdev_x;
-        float z_y = (points[i].price - mean_y) / stdev_y;
-        points[i].milage = z_x;
-        points[i].price = z_y;
-        if (z_x < min_x)
-            min_x = z_x;
-        if (z_y < min_y)
-            min_y = z_y;
-        if (z_x > max_x)
-            max_x = z_x;
-        if (z_y > max_y)
-            max_y = z_y;
-    }
-
-    // Shift to make all values non-negative
-    float shift_x = (min_x < 0.f) ? -min_x : 0.f;
-    float shift_y = (min_y < 0.f) ? -min_y : 0.f;
-    for (size_t i = 0; i < n_points; ++i)
-    {
-        points[i].milage += shift_x;
-        points[i].price += shift_y;
-    }
-
-    float range_x = (max_x + shift_x);
-    float range_y = (max_y + shift_y);
-    if (range_x == 0.f)
-        range_x = 1.f;
-    if (range_y == 0.f)
-        range_y = 1.f;
-
-    float usable_w = WINDOW_W * 0.8f;
-    float usable_h = WINDOW_H * 0.8f;
-
-    for (size_t i = 0; i < n_points; ++i)
-    {
-        points[i].milage = WINDOW_W * 0.1f + (points[i].milage / range_x) * usable_w;
-        // Invert Y since the screen Y axis grows downward
-        float normY = points[i].price / range_y;
-        points[i].price = WINDOW_H * 0.9f - normY * usable_h;
+        float z_x = (points[i].x - mean_x) / stdev_x;
+        float z_y = (points[i].y - mean_y) / stdev_y;
+        std_points[i].x = z_x;
+        std_points[i].y = z_y;
+        if (points[i].x < data->min_x)
+            data->min_x = points[i].x;
+        if (points[i].y < data->min_y)
+            data->min_y = points[i].y;
+        if (points[i].x > data->max_x)
+            data->max_x = points[i].x;
+        if (points[i].y > data->max_y)
+            data->max_y = points[i].y;
     }
 }

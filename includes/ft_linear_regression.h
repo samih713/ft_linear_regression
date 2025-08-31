@@ -5,9 +5,13 @@
 #include <stddef.h>
 #include <stdio.h> // -- remove
 #include <assert.h>
+#include <float.h>
+#include <math.h>
+
 #include "raylib.h"
 #include "tinyfiledialogs.h"
 #include "load_csv.h"
+#include "matrix.h"
 
 #define TODO(thing) (assert(false && (thing)))
 
@@ -20,13 +24,26 @@ typedef enum
 // initial state
 extern MENU_ACTION action;
 
-typedef struct point_s
+typedef struct
 {
-    float milage;
-    float price;
+    float x;
+    float y;
 } point_t;
 
-extern size_t n_points;
+typedef struct
+{
+    point_t *points;
+    point_t *std_points;
+    float min_x, max_x;
+    float min_y, max_y;
+    size_t n_points;
+} data_t;
+
+typedef struct
+{
+    float sx, sy; // scales
+    float ox, oy; // offset
+} xform_t;
 
 /* -------------------------------------------------------------------------- */
 /*                                  CONSTANTS                                 */
@@ -41,6 +58,10 @@ extern size_t n_points;
 #define BUTTON_X (WINDOW_W * 0.75)
 #define BUTTON_SIZE ((Vector2){.x = WINDOW_W * .23, .y = WINDOW_H * .08})
 #define BUTTON_H_GAP (WINDOW_H * 0.03)
+/* ---------------------------------- PLOT ---------------------------------- */
+#define PAD 40.0f
+#define POINT_COLOR (Fade(RED, 0.9))
+#define POINT_SIZE 4
 /* -------------------------------- LOAD DATA ------------------------------- */
 #define MAX_POINTS 256
 /* -------------------------------------------------------------------------- */
@@ -52,13 +73,17 @@ void DrawButton(const char *tex, Rectangle button);
 /* -------------------------------------------------------------------------- */
 /*                                    PLOT                                    */
 /* -------------------------------------------------------------------------- */
-void DrawAxis();
-void DrawPoints(point_t *points, size_t n_points);
-void standardize_points(point_t *points, size_t n_points);
+void plot(data_t t);
+void draw_axis(data_t t);
+/* ------------------------------- PLOT UTILS ------------------------------- */
+float clamp(float value, float min, float max);
+Vector2 data_to_window(data_t t, point_t p);
+/* --------------------------- LINEAR REGRESSSION --------------------------- */
+void standardize_points(data_t *data);
 /* -------------------------------------------------------------------------- */
 /*                                  LOAD DATA                                 */
 /* -------------------------------------------------------------------------- */
-bool load_data(RenderTexture2D *canvas);
+bool load_data(data_t *data);
 void load_points(char **values, void *points);
 
 #endif // FT_LINEAR_REGRESSION

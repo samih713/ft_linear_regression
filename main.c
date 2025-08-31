@@ -9,25 +9,61 @@ void run_lr()
 
 int main()
 {
+    // set up data
+    data_t data;
+    bool data_ready = false;
+
 #if defined(__MAC__)
     SetConfigFlags(FLAG_WINDOW_HIGHDPI);
 #endif
-    InitWindow(WINDOW_W, WINDOW_H, TITLE);
 
+    InitWindow(WINDOW_W, WINDOW_H, TITLE);
     RenderTexture2D canvas = LoadRenderTexture(WINDOW_W, WINDOW_H);
-    BeginTextureMode(canvas);
-    ClearBackground(BLACK);
-    EndTextureMode();
-    bool canvas_ready = false;
+
+    Camera2D camera = {0};
+    camera.target = (Vector2){WINDOW_W / 2, WINDOW_H / 2};
+    camera.offset = (Vector2){WINDOW_W / 2, WINDOW_H / 2};
+    camera.rotation = 0;
+    camera.zoom = 1.0f;
 
     while (!WindowShouldClose())
     {
-        
+        ClearBackground(RAYWHITE);
+        // panning
+        if (IsKeyDown(KEY_RIGHT))
+            camera.target.x += 2;
+        if (IsKeyDown(KEY_LEFT))
+            camera.target.x -= 2;
+        if (IsKeyDown(KEY_UP))
+            camera.target.y -= 2;
+        if (IsKeyDown(KEY_DOWN))
+            camera.target.y += 2;
+        // zooming
+        // Zoom based on mouse wheel
+        float wheel = GetMouseWheelMove();
+        float scale = 0.2f * wheel;
+        if (wheel != 0)
+        {
+            Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
+            camera.offset = GetMousePosition();
+            camera.target = mouseWorldPos;
+            camera.zoom = clamp(expf(logf(camera.zoom) + scale), 0.125f, 64.0f);
+        }
+        // reset
+        if (IsKeyPressed(KEY_R))
+        {
+            camera.zoom = 1.0f;
+            camera.target = (Vector2){WINDOW_W / 2, WINDOW_H / 2};
+            camera.offset = (Vector2){WINDOW_W / 2, WINDOW_H / 2};
+            camera.rotation = 0.0f;
+        }
+
+        // menu
         switch (action)
         {
         case MENU_LOAD_CSV:
-            if (load_data(&canvas))
-                canvas_ready = true;
+            if (load_data(&data))
+                data_ready = true;
             action = MENU_NONE;
             break;
         case MENU_RUN_LR:
@@ -38,18 +74,24 @@ int main()
         }
 
         BeginDrawing();
-        ClearBackground(BLACK);
-        if (canvas_ready)
+        BeginMode2D(camera);
+        ClearBackground(RAYWHITE);
+        if (data_ready)
         {
-            DrawTextureRec(canvas.texture, (Rectangle){0, 0, (float)canvas.texture.width, (float)-canvas.texture.height}, (Vector2){0, 0}, WHITE);
-            DrawAxis();
-            DrawMenu();
+            BeginTextureMode(canvas);
+            ClearBackground(RAYWHITE);
+            plot(data);
+            draw_axis(data);
+            EndTextureMode();
+            // reset the data
+            data_ready = false;
         }
         else
         {
-            DrawAxis();
-            DrawMenu();
         }
+        DrawTextureRec(canvas.texture, (Rectangle){0, 0, (float)canvas.texture.width, (float)-canvas.texture.height}, (Vector2){0, 0}, WHITE);
+        EndMode2D();
+        DrawMenu();
         EndDrawing();
     }
     UnloadRenderTexture(canvas);

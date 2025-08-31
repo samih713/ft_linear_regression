@@ -1,6 +1,6 @@
 #include "ft_linear_regression.h"
 
-bool load_data(RenderTexture2D *canvas)
+bool load_data(data_t *data)
 {
     static point_t points[MAX_POINTS];
     size_t n_points = 0;
@@ -15,10 +15,10 @@ bool load_data(RenderTexture2D *canvas)
     // draw the points
     if (n_points)
     {
-        BeginTextureMode(*canvas);
-        ClearBackground(BLACK);
-        DrawPoints(points, n_points);
-        EndTextureMode();
+        data->points = points;
+        data->n_points = n_points;
+        // standardize the points
+        standardize_points(data);
         return true;
     }
     return false;
