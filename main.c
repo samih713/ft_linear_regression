@@ -18,7 +18,11 @@ int main()
 #endif
 
     InitWindow(WINDOW_W, WINDOW_H, TITLE);
-    RenderTexture2D canvas = LoadRenderTexture(WINDOW_W, WINDOW_H);
+    // to initially clear the window
+    BeginDrawing();
+    ClearBackground(RAYWHITE);
+    EndDrawing();
+    
 
     Camera2D camera = {0};
     camera.target = (Vector2){WINDOW_W / 2, WINDOW_H / 2};
@@ -28,7 +32,6 @@ int main()
 
     while (!WindowShouldClose())
     {
-        ClearBackground(RAYWHITE);
         // panning
         if (IsKeyDown(KEY_RIGHT))
             camera.target.x += 2;
@@ -75,26 +78,19 @@ int main()
 
         BeginDrawing();
         BeginMode2D(camera);
-        ClearBackground(RAYWHITE);
+
         if (data_ready)
         {
-            BeginTextureMode(canvas);
             ClearBackground(RAYWHITE);
             plot(data);
             draw_axis(data);
-            EndTextureMode();
-            // reset the data
             data_ready = false;
         }
-        else
-        {
-        }
-        DrawTextureRec(canvas.texture, (Rectangle){0, 0, (float)canvas.texture.width, (float)-canvas.texture.height}, (Vector2){0, 0}, WHITE);
+
         EndMode2D();
         DrawMenu();
         EndDrawing();
     }
-    UnloadRenderTexture(canvas);
     CloseWindow();
     return 0;
 }

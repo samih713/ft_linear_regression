@@ -20,7 +20,7 @@ static matrix_t data_to_window_matrix(data_t t)
     MAT_AT(transform, 0, 0) = sx;
     MAT_AT(transform, 0, 2) = -sx * t.min_x + PAD;
     MAT_AT(transform, 1, 1) = -sy;                       // flip the y
-    MAT_AT(transform, 1, 2) = WINDOW_H + sy * t.min_y + PAD; // to shift back into window
+    MAT_AT(transform, 1, 2) = (WINDOW_H - PAD) + sy * t.min_y; // to shift back into window
     MAT_AT(transform, 2, 2) = 1;
     return transform;
 }

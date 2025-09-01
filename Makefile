@@ -2,7 +2,7 @@ NAME:= ft_linear_regression
 
 CC:= cc
 INCLUDES:= includes
-CFLAGS:= -Wall -Werror -Wextra -I$(INCLUDES) -ggdb3 -fsanitize=address
+CFLAGS:= -Wall -Werror -Wextra -I$(INCLUDES) -ggdb3 
 
 ifeq ($(shell uname), Linux)
 	LIBS:= -lraylib -lmatrix -lm 

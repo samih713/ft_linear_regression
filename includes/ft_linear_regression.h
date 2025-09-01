@@ -59,9 +59,9 @@ typedef struct
 #define BUTTON_SIZE ((Vector2){.x = WINDOW_W * .23, .y = WINDOW_H * .08})
 #define BUTTON_H_GAP (WINDOW_H * 0.03)
 /* ---------------------------------- PLOT ---------------------------------- */
-#define PAD 40.0f
+#define PAD 100.0f
 #define POINT_COLOR (Fade(RED, 0.9))
-#define POINT_SIZE 4
+#define POINT_SIZE 6
 /* -------------------------------- LOAD DATA ------------------------------- */
 #define MAX_POINTS 256
 /* -------------------------------------------------------------------------- */
