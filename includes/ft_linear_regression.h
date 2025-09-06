@@ -9,6 +9,7 @@
 #include <math.h>
 
 #include "raylib.h"
+#include "raymath.h"
 #include "tinyfiledialogs.h"
 #include "load_csv.h"
 #include "matrix.h"
@@ -44,7 +45,7 @@ typedef struct
     float sx, sy; // scales
     float ox, oy; // offset
 } xform_t;
-
+#define UNUSED(X) ((void)(X))
 /* -------------------------------------------------------------------------- */
 /*                                  CONSTANTS                                 */
 /* -------------------------------------------------------------------------- */
@@ -59,7 +60,7 @@ typedef struct
 #define BUTTON_SIZE ((Vector2){.x = WINDOW_W * .23, .y = WINDOW_H * .08})
 #define BUTTON_H_GAP (WINDOW_H * 0.03)
 /* ---------------------------------- PLOT ---------------------------------- */
-#define PAD 100.0f
+#define PAD 30.0f
 #define POINT_COLOR (Fade(RED, 0.9))
 #define POINT_SIZE 6
 /* -------------------------------- LOAD DATA ------------------------------- */
@@ -74,7 +75,7 @@ void DrawButton(const char *tex, Rectangle button);
 /*                                    PLOT                                    */
 /* -------------------------------------------------------------------------- */
 void plot(data_t t);
-void draw_axis(data_t t);
+void draw_axis(Camera2D camera);
 /* ------------------------------- PLOT UTILS ------------------------------- */
 float clamp(float value, float min, float max);
 Vector2 data_to_window(data_t t, point_t p);

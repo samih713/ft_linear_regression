@@ -18,6 +18,7 @@ int main()
 #endif
 
     InitWindow(WINDOW_W, WINDOW_H, TITLE);
+    SetTargetFPS(10);
     // to initially clear the window
     BeginDrawing();
     ClearBackground(RAYWHITE);
@@ -78,15 +79,12 @@ int main()
 
         BeginDrawing();
         BeginMode2D(camera);
+        ClearBackground(RAYWHITE);
 
         if (data_ready)
-        {
-            ClearBackground(RAYWHITE);
             plot(data);
-            draw_axis(data);
-            data_ready = false;
-        }
 
+        draw_axis(camera);
         EndMode2D();
         DrawMenu();
         EndDrawing();
